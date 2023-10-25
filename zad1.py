@@ -7,6 +7,7 @@ zad=["","1.2:","1.3:"]
 zera=["","","00"]
 files=[[],[],[]]
 colors=["b","r","g"]
+titles=["Metoda Eulera","Metoda RK2","Metoda RK4"]
 kl=0
 for i in zad:
     for j in range(len(t)):
@@ -15,7 +16,7 @@ for i in zad:
 
 for kl in range(3):
     fig=plt.figure(facecolor='white')
-    
+    plt.title(titles[kl]+" -rozwiązanie")
     for i in range (len(files[kl])):
 
         data = np.loadtxt(files[kl][i])
@@ -35,9 +36,10 @@ for kl in range(3):
     plt.xlabel('t')
     plt.ylabel('y(t)')
 
-    plt.savefig("zad"+str(kl+1)+".png",bbox_inches='tight', transparent=True)
+    plt.savefig("zad"+str(kl+1)+".png")
 
-    fig=plt.figure()
+    fig=plt.figure(facecolor='white')
+    plt.title(titles[kl]+" -błąd globalny")
     for i in range(len(files[kl])):
 
         data = np.loadtxt(files[kl][i])
@@ -51,7 +53,7 @@ for kl in range(3):
     plt.xlabel('t')
     plt.ylabel('ynum(t)-ydok(t)')
 
-    l1 = plt.legend()
+   
     if kl==1 or kl==2:
         x1, x2, y1, y2 = 0, 5, 0., 0.0008
         axins = plt.axes([0.55, 0.55, 0.3, 0.3])
@@ -68,8 +70,10 @@ for kl in range(3):
         axins.set_xlim(x1, x2)
         axins.set_ylim(y1, y2)
 
-            # Ustawienie granic okna z przybliżeniem
-       
 
-    plt.savefig("zad"+str(kl+1)+"a.png",bbox_inches='tight', transparent=True)
+            # Ustawienie granic okna z przybliżeniem
+    else:
+         l1 = plt.legend()
+
+    plt.savefig("zad"+str(kl+1)+"a.png")
 

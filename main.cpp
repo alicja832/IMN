@@ -9,7 +9,7 @@
 #define C 0.001
 
 using namespace std;
-double w_v;
+double w_v=1./sqrt(L*C);
 /**
  * @brief 
  * dy/dt
@@ -55,7 +55,7 @@ double f(double t,double Q, double I)
  */
 double g(double t,double Q, double I)
 {
-    return V(w_v,t)/L-R/L*I-1/(L*C)*Q;
+    return V(w_v,t)/L-(R/L)*I-1/(L*C)*Q;
 }
 
 
@@ -134,7 +134,7 @@ int main()
         double w_0=1./sqrt(L*C);
         double T=2*M_PI/w_0;
         double Q=0,I=0;
-        double t=10e-4,n;
+        double t=0.0001,n;
         double k1Q,k2Q,k3Q,k4Q,k1I,k2I,k3I,k4I;
         vector<double> ww{0.5*w_0,0.8*w_0,1.0*w_0,1.2*w_0};
 
@@ -143,8 +143,11 @@ int main()
             plik_Q.open("wynikQ"+to_string(int(w))+".txt",ios::out);
             plik_I.open("wynikI"+to_string(int(w))+".txt",ios::out);
             
+            I=0;
+            Q=0;
             for(n=0;n<=4*T/t;n++)
             {
+                
                 plik_Q<<n*t<<"\t";
                 plik_Q<<Q;
                 plik_Q<<std::endl;
@@ -152,15 +155,15 @@ int main()
                 plik_I<<I<<std::endl;
                 k1Q=f(n*t,Q,I);
                 k1I=g(n*t,Q,I);
-                k2Q=I+t/2.0*k1I;
+                k2Q=I+t/2.*k1I;
                 k2I=V(w,t*(n+0.5))/L-1/(L*C)*(Q+t/2.*k1Q)-R/L*(I+t/2.*k1I);
                 k3Q=I+t/2.*k2I;
                 k3I=V(w,t*(n+0.5))/L-1/(L*C)*(Q+t/2.*k2Q)-R/L*(I+t/2.*k2I);
                 k4Q=I+t*k3I;
-                k4I=V(w,t*(n+0.5))/L-1/(L*C)*(Q+t*k3Q)-R/L*(I+t*k3I);
+                k4I=V(w,t*(n+1))/L-1/(L*C)*(Q+t*k3Q)-R/L*(I+t*k3I);
 
-                Q=Q+t/6.*(k1Q+2*k1Q+2*k3Q+k4Q);
-                I=I+t/6.*(k1I+2*k1I+2*k3I+k4I);
+                Q=Q+t/6.*(k1Q+2*k2Q+2*k3Q+k4Q);
+                I=I+t/6.*(k1I+2*k2I+2*k3I+k4I);
             }
             plik_I.close();
             plik_Q.close();

@@ -16,6 +16,7 @@ for i in range (len(files)):
 for i in files:
     z=0
     plt.figure()
+    plt.title("Metoda RK4, "+szukane[n]+"(t)")
     for j in i:
        data = np.loadtxt(j)
        x = data[:, 0]
@@ -25,5 +26,5 @@ for i in files:
     plt.legend()
     plt.xlabel('t')
     plt.ylabel(str(szukane[n])+"(t)")   
-    plt.savefig("zad4"+szukane[n]+".png",bbox_inches='tight', transparent=True)
+    plt.savefig("zad4"+szukane[n]+".png")
     n+=1
