@@ -20,7 +20,7 @@ for i in files:
        data = np.loadtxt(j)
        x = data[:, 0]
        y= data[:, 1]
-       plt.plot(x,y,colors[z]+'-',label='w0 = '[z])
+       plt.plot(x,y,colors[z]+'-',label=w[z])
        z+=1
     plt.legend()
     plt.xlabel('t')

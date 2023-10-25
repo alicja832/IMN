@@ -47,9 +47,29 @@ for kl in range(3):
 
         plt.plot(x, y, colors[i]+"-", label='dt='+t[i])
 
+    
     plt.xlabel('t')
     plt.ylabel('ynum(t)-ydok(t)')
 
     l1 = plt.legend()
+    if kl==1 or kl==2:
+        x1, x2, y1, y2 = 0, 5, 0., 0.0008
+        axins = plt.axes([0.55, 0.55, 0.3, 0.3])
+        if kl==2:
+           y2=4*1e-7
+        for i in range(len(files[kl])):
+
+            data = np.loadtxt(files[kl][i])
+
+            x = data[:, 0]
+            y = data[:, 3]
+            axins.plot(x, y, colors[i]+"-")
+
+        axins.set_xlim(x1, x2)
+        axins.set_ylim(y1, y2)
+
+            # Ustawienie granic okna z przybliżeniem
+       
+
     plt.savefig("zad"+str(kl+1)+"a.png",bbox_inches='tight', transparent=True)
 
