@@ -1,175 +1,133 @@
-#include <fstream>
 #include <iostream>
-#include <cmath>
 #include <vector>
-
-#define lambda -1
-#define R 100
-#define L 0.1
-#define C 0.001
+#include <functional>
+#include <algorithm>
+#include <cmath>
+#include <string>
+#include <fstream>
 
 using namespace std;
-double w_v=1./sqrt(L*C);
-/**
- * @brief 
- * dy/dt
- * funkcja używana do zadania pierwszego
- * @param y 
- * @return double 
- */
-double fun(double y)
+
+double f(double x,double v)
 {
-    
-    return lambda*y;
+    return v;
 }
-/**
- * @brief 
- * funkcja zwracająca aktualną wartość napięcia w danej chwili dla zadanej częstotliwości
- * @param w 
- * @param t 
- * @return double 
- */
-double V(double w,double t)
+double g(double alfa,double x,double v)
 {
-    return 10*sin(w*t);
-}
-/**
- * @brief 
- * dQ/dt
- * @param t 
- * @param Q 
- * @param I 
- * @return double 
- */
-double f(double t,double Q, double I)
-{
-    return I;
-}
-/**
- * @brief 
- * dI/dt
- * @param t 
- * @param Q 
- * @param I 
- * @return double 
- */
-double g(double t,double Q, double I)
-{
-    return V(w_v,t)/L-(R/L)*I-1/(L*C)*Q;
+    return alfa*(1-x*x)*v-x;
 }
 
+/**
+ * @brief 
+ * 
+ * @param alfa 
+ * @param t - deltat 
+ * @param x 
+ * @param v 
+ * @return vector<double> contains xn+1 and vn+1 
+ */
+vector<double> Rk2(double alfa,double t,double x,double v)
+{
+    //vector contains xn+1 and vn+1
+    vector<double> rk;
+    double k1x,k1v,k2x,k2v;
+
+    k1x=f(x,v);
+    k1v=g(alfa,x,v);
+
+    k2x=f(x+t*k1x,v+t*k1v);
+    k2v=g(alfa,x+t*k1x,v+t*k1v);
+
+    rk.push_back(x+t/2.*(k1x+k2x));
+    rk.push_back(v+t/2.*(k1v+k2v));
+
+    return rk;
+}
+/**
+ * @brief 
+ * 
+ * @param alfa 
+ * @param t - deltat 
+ * @param x 
+ * @param v 
+ * @return vector<double> contains xn+1 and vn+1 
+ */
+vector<double> trapeze_method(double alfa,double t,double x,double v)
+{
+    vector<double> tr;
+    double x1=x,v1=v,deltax=0,deltav=0;
+    double ff,gg,a11,a21,a12,a22;
+    double psi=10e-10;
+
+    x1=x+t/2.*(f(x,v)+f(x1,v1));
+    v1=v+t/2.*(g(alfa,x,v)+g(alfa,x1,v1));
+
+    ff=x1-x-t/2.*(f(x,v)+f(x1,v1));
+    gg=v1-v-t/2.*(g(alfa,x,v)+g(alfa,x1,v1));
+
+    while(abs(deltav)>=psi && abs(deltax)>=psi){
+
+        a11=1;
+        a12=-t/2.;
+        a21=-t/2.*(-2*alfa*x1*v1-1);
+        a22=1-t/2.*alfa*(1-(x1*x1));
+        deltax=((-ff)*a22-(-gg)*a12)/(a11*a22-a12*a21);
+        deltav=((-gg)*a11-(-ff)*a21)/(a11*a22-a12*a21);
+        x1=x1+deltax;
+        v1=v1+deltav;
+    }
+    tr.push_back(x1);
+    tr.push_back(v1);
 
 
+    return tr;
+}
+
+void time_pass_method(function<vector<double>(double,double,double,double)> fun,double TOL,string nazwa_pliku)
+{
+    double t=0,tmax=40,x0=0.01,v0=0,deltat0=1,alfa=5;
+    double deltat=deltat0;
+    double xn=x0,vn=v0;
+    vector<double> result;
+    double x21,v21,x22,v22,ex,ev;
+    double S=0.75;
+    fstream plik;
+    plik.open(nazwa_pliku,ios::out);
+
+    while(t<tmax){
+        result=fun(alfa,deltat,xn,vn);
+        result=fun(alfa,deltat,result[0],result[1]);
+        x22=result[0];
+        v22=result[1];
+        //stawiamy jeden krok 2*t
+        result=fun(alfa,2*deltat,xn,vn);
+        x21=result[0];
+        v21=result[1];
+        //liczymy ex,ey
+        ex=(x22-x21)/(2*2*2-1);
+        ev=(v22-v21)/(2*2*2-1);
+
+        if(max<double>(abs(ex),abs(ev))<TOL)
+        {
+            t=t+2*deltat;
+            xn=x22;
+            vn=v22;
+            plik<<t<<"\t"<<vn<<"\t"<<xn<<"\t"<<deltat<<endl;
+        }
+        deltat=cbrt(S*TOL/max(abs(ex),abs(ev)))*deltat;
+
+    }
+
+}
 int main()
 {
-    /**
-     * @brief 
-     * zadanie pierwsze
-     * generacja danych do wykresu
-     */
+    //algorytm numerycznego rozwiązywania różniczkowego z doborem kroku czasowego
+    double tol[]={10e-2,10e-5};
+    
+    for(auto i: tol)
     {
-        fstream plik1_1;
-        fstream plik1_2;
-        fstream plik1_3;
-        //y-schemat eulera
-        //y_t-metoda trapezów
-        double y,y_t,t,n,y_num,k1=0,k2=0,k1n,k2n,k3,k4,y_t2;
-        for(t=0.01;t<=5;t*=10)
-        {
-            y=1;
-            y_t=1;
-            y_t2=1;
-            plik1_1.open("wynik"+to_string(t)+".txt",ios::out);
-            plik1_2.open("wynik1.2:"+to_string(t)+".txt",ios::out);
-            plik1_3.open("wynik1.3:"+to_string(t)+".txt",ios::out);
-            for(n=0;n<=5/t;n++)
-            {
-                /**
-                 * @brief 
-                 * schemat eulera
-                 */
-                y_num=exp(lambda*t*n);
-
-                plik1_1<<n*t<<"\t";
-                plik1_1<<y<<"\t";
-                plik1_1<<y_num<<"\t";
-                plik1_1<<y-y_num<<endl;
-                
-                y=y+t*fun(y);
-                
-                //metoda jawna trapezów
-                plik1_2<<n*t<<"\t";
-                plik1_2<<y_t<<"\t";
-                plik1_2<<y_num<<"\t";
-                plik1_2<<y_t-y_num<<endl;
-                k1=fun(y_t);
-                k2=fun(y_t+t*k1);
-                y_t=y_t+t/2.0*(k1+k2);
-
-                //metoda jawna RK4
-                plik1_3<<n*t<<"\t";
-                plik1_3<<y_t2<<"\t";
-                plik1_3<<y_num<<"\t";
-                plik1_3<<y_t2-y_num<<endl;
-                k1n=fun(y_t2);
-                k2n=fun(y_t2+t/2.0*k1n);
-                k3=fun(y_t2+t/2.0*k2n);
-                k4=fun(y_t2+t*k3);
-                y_t2=y_t2+t/6.*(k1n+2*k2n+2*k3+k4);
-
-                }
-            plik1_1.close();
-            plik1_2.close();
-            plik1_3.close();
-
-     
-        }
+        time_pass_method(Rk2,i,"rk2"+to_string(i)+".txt");
+        time_pass_method(trapeze_method,i,"trapez"+to_string(i)+".txt");
     }
-    //zadanie 2
-    {
-        fstream plik_Q;
-        fstream plik_I;
-        
-        
-        double w_0=1./sqrt(L*C);
-        double T=2*M_PI/w_0;
-        double Q=0,I=0;
-        double t=0.0001,n;
-        double k1Q,k2Q,k3Q,k4Q,k1I,k2I,k3I,k4I;
-        vector<double> ww{0.5*w_0,0.8*w_0,1.0*w_0,1.2*w_0};
 
-        for(auto w:ww){
-
-            plik_Q.open("wynikQ"+to_string(int(w))+".txt",ios::out);
-            plik_I.open("wynikI"+to_string(int(w))+".txt",ios::out);
-            
-            I=0;
-            Q=0;
-            for(n=0;n<=4*T/t;n++)
-            {
-                
-                plik_Q<<n*t<<"\t";
-                plik_Q<<Q;
-                plik_Q<<std::endl;
-                plik_I<<n*t<<"\t";
-                plik_I<<I<<std::endl;
-                k1Q=f(n*t,Q,I);
-                k1I=g(n*t,Q,I);
-                k2Q=I+t/2.*k1I;
-                k2I=V(w,t*(n+0.5))/L-1/(L*C)*(Q+t/2.*k1Q)-R/L*(I+t/2.*k1I);
-                k3Q=I+t/2.*k2I;
-                k3I=V(w,t*(n+0.5))/L-1/(L*C)*(Q+t/2.*k2Q)-R/L*(I+t/2.*k2I);
-                k4Q=I+t*k3I;
-                k4I=V(w,t*(n+1))/L-1/(L*C)*(Q+t*k3Q)-R/L*(I+t*k3I);
-
-                Q=Q+t/6.*(k1Q+2*k2Q+2*k3Q+k4Q);
-                I=I+t/6.*(k1I+2*k2I+2*k3I+k4I);
-            }
-            plik_I.close();
-            plik_Q.close();
-
-        }
-
-   
-    }
 }
