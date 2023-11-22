@@ -96,7 +96,11 @@ int main()
                         vn[i][j]=(1-wl[k])*vn[i][j]+wl[k]*0.25*(vn[i+1][j]+vn[i-1][j]+vn[i][j-1]+vn[i][j+1]+(pow(delta,2)/epsilon)*ro[i][j]);
                     }
                 }
-                
+                  for(int j=1; j<ny; j++)
+                {
+                    vn[0][j]=vn[1][j];
+                    vn[nx][j]=vn[nx-1][j];
+                }
         
                 sittmp=sit;
                 sit=0.;
