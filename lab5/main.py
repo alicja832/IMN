@@ -19,7 +19,6 @@ plt.legend()
 
 for i in range(len(k)):
     plt.subplot(2, 3, i+1) 
-    #plt.figure()
     a=k[i]
     plt.title(f"Mapa potencjału dla k ={a}")
     data=np.loadtxt(f"k{a}.txt")  
@@ -30,8 +29,6 @@ for i in range(len(k)):
     plt.tight_layout() 
     plt.xlabel('x')
     plt.ylabel('y')   
-    #plt.savefig("Mapa"+k[i]+".png")
-
-#calka od liczby iteracji
+   
 plt.tight_layout() 
 plt.savefig("lab5.png")
