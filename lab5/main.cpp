@@ -69,9 +69,9 @@ int main()
         plik_s[l].close();
 
         //wpisujemy mape potencjalu
-        for(i=0;i<(nx);i++)
-            for(j=0;j<(ny);j++)
-                plik[l]<<delta*i<<"\t"<<delta*j<<"\t"<<(v[i/k*k][j/k*k]+v[i/k*k+k][j/k*k+k])/2<<endl;
+        for(i=0;i<(nx+1);i++)
+            for(j=0;j<(ny+1);j++)
+                plik[l]<<delta*i<<"\t"<<delta*j<<"\t"<<(v[i][j])<<endl;
 
         plik[l].close();
         

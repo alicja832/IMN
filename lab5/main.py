@@ -21,12 +21,30 @@ plt.legend()
 
 for i in range(len(k)):
     plt.subplot(2, 3, i+1) 
-    #plt.figure()
     a=k[i]
+    pkt=[]
+    z=[]
+    x=0
+    #plt.figure()
     plt.title(f"Mapa potencjału dla k ={a}")
-    data=np.loadtxt(f"k{a}.txt")  
-
-    plt.tricontourf(data[:,0],data[:,1],data[:,2],levels=np.linspace(np.min(data[:, 2]), np.max(data[:, 2]), 999),
+    data=np.loadtxt(f"k{a}.txt")
+   
+    pkt=[]
+    for j in range (0,129):
+        pkt.append([])
+        for l in range (0,129):
+            pkt[j].append(data[:,2][x])
+            x+=1 
+    print(len(pkt[0]))
+    for j in range (0,129):
+        for l in range (0,129):  
+            if j==128 or l==128:
+                z.append(pkt[j][l])  
+            else:  
+                z.append((pkt[(j//a)*a][(l//a)*a]+pkt[(j//a)*a+a][(l//a)*a+a])/2) 
+                 
+       
+    plt.tricontourf(data[:,0],data[:,1],z,levels=np.linspace(np.min(data[:, 2]), np.max(data[:, 2]), 999),
                        cmap='rainbow_r')
     plt.colorbar(ticks=np.linspace(min(data[:, 2]), max(data[:, 2]),5))
     plt.tight_layout() 
