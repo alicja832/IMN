@@ -8,17 +8,20 @@ plt.figure(figsize=(12, 7))
 
 
 plt.subplot(2, 3, 6)
-plt.title(" S(it) ")
+plt.title("S(it)")
 for i in k:
     data=np.loadtxt(f"ks{i}.txt")
     plt.plot(data[:,0],data[:,1],label=f"k={i}")
+it=data[:,0][len(data[:,0])-1]
 plt.grid()
 plt.xlabel('it')
-plt.ylabel('S')  
+plt.ylabel('S')
+plt.text(100,4.8,f"Liczba iteracji:{it}")  
 plt.legend()
 
 for i in range(len(k)):
     plt.subplot(2, 3, i+1) 
+    #plt.figure()
     a=k[i]
     plt.title(f"Mapa potencjału dla k ={a}")
     data=np.loadtxt(f"k{a}.txt")  
@@ -29,6 +32,7 @@ for i in range(len(k)):
     plt.tight_layout() 
     plt.xlabel('x')
     plt.ylabel('y')   
-   
+    
 plt.tight_layout() 
+
 plt.savefig("lab5.png")

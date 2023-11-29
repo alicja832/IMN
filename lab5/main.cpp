@@ -61,16 +61,17 @@ int main()
         (v[i][j + k] - v[i][j] + v[i + k][j + k] - v[i + k][j]) / (2 * k * delta));
                  
                 }
+                it++;
               plik_s[l]<<it<<"\t"<<s<<endl;
-            it++;
+            
         }while(fabs((s-st)/st)>=TOL);
         
         plik_s[l].close();
 
         //wpisujemy mape potencjalu
-        for(i=0;i<(nx+1);i++)
-            for(j=0;j<(ny+1);j++)
-                plik[l]<<delta*i<<"\t"<<delta*j<<"\t"<<v[i/k*k][j/k*k]<<endl;
+        for(i=0;i<(nx);i++)
+            for(j=0;j<(ny);j++)
+                plik[l]<<delta*i<<"\t"<<delta*j<<"\t"<<(v[i/k*k][j/k*k]+v[i/k*k+k][j/k*k+k])/2<<endl;
 
         plik[l].close();
         
