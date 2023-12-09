@@ -110,12 +110,19 @@ int main()
     psi.resize(nx+1, std::vector<double>(ny+1, 0));
     std::vector<std::vector<double>> ksi;
     ksi.resize(nx+1, std::vector<double>(ny+1, 0));
+    
     double q_we=-1000.,omega,tau;
     std::fstream plik;
     int i,j,it,j2=j1+2;
+    for(i=0; i<=nx;i++)
+            for(j=0;j<=ny;j++)
+                {
+                    psi[i][j] = 0.;
+                    ksi[i][j] = 0.;
+                }
     //zaimplementowac algorytm relaksacji rownan ns
     psi_wb(psi,q_we);
-    plik.open("q1.txt");
+    plik.open("q1.txt",std::ios::out);
     for(it=1;it<=IT_MAX;it++)
     {
         if(it<2000)
@@ -134,20 +141,22 @@ int main()
                     psi[i][j]=0.25*(psi[i+1][j]+psi[i-1][j]+psi[i][j+1]+psi[i][j-1]
                         -delta*delta*ksi[i][j]);
                     ksi[i][j]=0.25*(ksi[i+1][j]+ksi[i-1][j]+ksi[i][j+1]+ksi[i][j-1])
-                        -omega*ro/(16.0*ni)*((psi[i][j+1]-psi[i][j-1])*(ksi[i+1][j]-ksi[i-1][j])-(ksi[i+1][j]-ksi[i-1][j])*(psi[i][j+1]-psi[i][j-1]));
+                        -omega*ro/(16.0*ni)*((psi[i][j+1]-psi[i][j-1])*(ksi[i+1][j]-ksi[i-1][j])-(psi[i+1][j]-psi[i-1][j])*(ksi[i][j+1]-ksi[i][j-1]));
                 }
-                plik<<i*delta<<"/t"<<j*delta<<"/t"<<psi[i][j]<<"/t"<<ksi[i][j]<<std::endl;
             }
         ksi_wb(ksi,q_we);
         tau=0.;
-        for(i=1;i<nx;i++)
-        {
-            tau+=psi[i+1][j2]+psi[i-1][j2]+psi[i][j2+1]+psi[i][j2-1]-4*psi[i][j2]-delta*delta*ksi[i][j2];
-        }
-        std::cout<<tau<<std::endl;
+        // for(i=1;i<nx;i++)
+        // {
+        //     tau+=psi[i+1][j2]+psi[i-1][j2]+psi[i][j2+1]+psi[i][j2-1]-4*psi[i][j2]-delta*delta*ksi[i][j2];
+        // }
+        // std::cout<<tau<<std::endl;
     }
+      for(i=0; i<=nx;i++)
+            for(j=0;j<=ny;j++)
+                plik << i * delta << "\t" << j * delta << "\t" << psi[i][j] << "\t" << ksi[i][j] << std::endl;
     //zadanie 4, wykres konturowy psi, ksi
 
-
+    
     return 0;
 }
