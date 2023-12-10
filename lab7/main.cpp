@@ -26,7 +26,7 @@ bool contains_j(int j)
     return true;
 }
 
-void psi_wb(std::vector<std::vector<double>>& v,double q_we)
+void pierwsze_wb(std::vector<std::vector<double>>& v,double q_we)
 {   
     //y=delta*j
     double y,i,j;
@@ -64,7 +64,7 @@ void psi_wb(std::vector<std::vector<double>>& v,double q_we)
         v[i][j1]=v[0][j1];
     }
 }
-void ksi_wb(std::vector<std::vector<double>>& v,double q_we)
+void drugie_wb(std::vector<std::vector<double>>& v,double q_we)
 {
     //y=delta*j
     double y,i,j;
@@ -106,23 +106,26 @@ void ksi_wb(std::vector<std::vector<double>>& v,double q_we)
 
 int main()
 {
-    std::vector<std::vector<double>> psi;
-    psi.resize(nx+1, std::vector<double>(ny+1, 0));
-    std::vector<std::vector<double>> ksi;
-    ksi.resize(nx+1, std::vector<double>(ny+1, 0));
+    std::vector<std::vector<double>> pierwszy;
+    pierwszy.resize(nx+1, std::vector<double>(ny+1, 0));
+    std::vector<std::vector<double>> drugi;
+    drugi.resize(nx+1, std::vector<double>(ny+1, 0));
     
     double q_we=-1000.,omega,tau;
     std::fstream plik;
+    std::fstream plik2;
     int i,j,it,j2=j1+2;
     for(i=0; i<=nx;i++)
             for(j=0;j<=ny;j++)
                 {
-                    psi[i][j] = 0.;
-                    ksi[i][j] = 0.;
+                    pierwszy[i][j] = 0.;
+                    drugi[i][j] = 0.;
                 }
     //zaimplementowac algorytm relaksacji rownan ns
-    psi_wb(psi,q_we);
+    pierwsze_wb(pierwszy,q_we);
     plik.open("q1.txt",std::ios::out);
+    plik2.open("q2.txt",std::ios::out);
+
     for(it=1;it<=IT_MAX;it++)
     {
         if(it<2000)
@@ -138,25 +141,34 @@ int main()
             {
                 if(!contains_i(i) && !contains_j(j))
                 {
-                    psi[i][j]=0.25*(psi[i+1][j]+psi[i-1][j]+psi[i][j+1]+psi[i][j-1]
-                        -delta*delta*ksi[i][j]);
-                    ksi[i][j]=0.25*(ksi[i+1][j]+ksi[i-1][j]+ksi[i][j+1]+ksi[i][j-1])
-                        -omega*ro/(16.0*ni)*((psi[i][j+1]-psi[i][j-1])*(ksi[i+1][j]-ksi[i-1][j])-(psi[i+1][j]-psi[i-1][j])*(ksi[i][j+1]-ksi[i][j-1]));
+                    pierwszy[i][j]=0.25*(pierwszy[i+1][j]+pierwszy[i-1][j]+pierwszy[i][j+1]+pierwszy[i][j-1]
+                        -delta*delta*drugi[i][j]);
+                    drugi[i][j]=0.25*(drugi[i+1][j]+drugi[i-1][j]+drugi[i][j+1]+drugi[i][j-1])
+                        -omega*ro/(16.0*ni)*((pierwszy[i][j+1]-pierwszy[i][j-1])*(drugi[i+1][j]-drugi[i-1][j])-(pierwszy[i+1][j]-pierwszy[i-1][j])*(drugi[i][j+1]-drugi[i][j-1]));
                 }
             }
-        ksi_wb(ksi,q_we);
+        drugie_wb(drugi,q_we);
         tau=0.;
-        // for(i=1;i<nx;i++)
-        // {
-        //     tau+=psi[i+1][j2]+psi[i-1][j2]+psi[i][j2+1]+psi[i][j2-1]-4*psi[i][j2]-delta*delta*ksi[i][j2];
-        // }
-        // std::cout<<tau<<std::endl;
+        if(it<20)
+        {
+            for(i=1;i<nx;i++)
+            {
+                tau+=pierwszy[i+1][j2]+pierwszy[i-1][j2]+pierwszy[i][j2+1]+pierwszy[i][j2-1]-4*pierwszy[i][j2]-delta*delta*drugi[i][j2];
+            }
+            std::cout<<tau<<std::endl;
+        }
     }
-      for(i=0; i<=nx;i++)
+    for(i=0; i<=nx;i++)
             for(j=0;j<=ny;j++)
-                plik << i * delta << "\t" << j * delta << "\t" << psi[i][j] << "\t" << ksi[i][j] << std::endl;
+                if(pierwszy[i][j]<(-49)&& pierwszy[i][j]>(-56))
+                plik << i * delta << "\t" << j * delta << "\t" << pierwszy[i][j]<<std::endl;
+    for(i=0; i<=nx;i++)
+            for(j=0;j<=ny;j++)
+                if(drugi[i][j]<(400)&& drugi[i][j]>(-200))
+                plik2 << i * delta << "\t" << j * delta << "\t" << drugi[i][j]<<std::endl;
     //zadanie 4, wykres konturowy psi, ksi
+    plik.close();
+    plik2.close();
 
-    
     return 0;
 }
