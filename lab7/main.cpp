@@ -11,7 +11,7 @@ int nx=200,ny=90;
 
 bool contains_i(int i)
 {
-    if(i!=i1 && i!=nx && i!=0)
+    if(i>i1 && i!=nx)
     {
         return false;
     }
@@ -19,7 +19,7 @@ bool contains_i(int i)
 }
 bool contains_j(int j)
 {
-    if(j!=j1 && j!=ny && j!=0)
+    if(j>j1 && j!=ny)
     {
         return false;
     }
