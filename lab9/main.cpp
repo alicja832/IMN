@@ -3,6 +3,7 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_blas.h> 
+
 //nie wiem co z tego ma wyjsc ale ma wyjsc okej,sprawdzic na taurusie
 #define IT_MAX 2000
 
@@ -24,6 +25,7 @@ int main()
     gsl_matrix *A = gsl_matrix_calloc(N, N);
     gsl_matrix *B = gsl_matrix_calloc(N, N);
     gsl_vector *T = gsl_vector_calloc(N);
+    gsl_vector *Tn = gsl_vector_calloc(N);
     gsl_vector *c = gsl_vector_calloc(N);
     gsl_vector *d = gsl_vector_calloc(N);
     
@@ -110,7 +112,8 @@ int main()
                         {
                             l=i+j*(nx+1);
                             plik_T<<i<<"\t"<<j<<"\t"<<gsl_vector_get(T,l)<<endl;
-                            plik_dT<<i<<"\t"<<j<<"\t"<<delta*delta*gsl_vector_get(T,l)<<endl;
+                            if(l>0)
+                                plik_dT<<i<<"\t"<<j<<"\t"<<(gsl_vector_get(T,l)-gsl_vector_get(Tn,l))/deltat<<endl;
                         }
                         plik_T<<endl;
                         plik_dT<<endl;
@@ -120,7 +123,15 @@ int main()
                     plik_T<<endl;
                     plik_T<<endl;
             }
-            
+            else if(k==99 || k==199 || k==499 || k==999 || k==1999)
+                {
+                    cout<<"l"<<endl;
+                 for(l=0;l<N;l++)
+                    {
+                        gsl_vector_set(Tn,l,gsl_vector_get(T,l));
+    
+                    }
+                }
         } 
         
     gsl_permutation_free( perm );
