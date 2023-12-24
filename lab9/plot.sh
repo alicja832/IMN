@@ -10,10 +10,11 @@ set term png size 3000,2000 enhanced font "Helvetica, 24" lw 2
 #set size 1,1
 #set size square
 
-set lmargin  1.5
-set bmargin  1.5
-set rmargin  1.5
-set tmargin  1.5
+set lmargin  4.5
+set bmargin  4.0
+set rmargin  4.5
+set tmargin  4.0
+set size square
 
 
 set out "T.png"
@@ -44,9 +45,39 @@ set ylabel 'y'
 
 splot [0:40][0:40] "T.dat" u 1:2:3 i 0 notitle
 
+set cbrange[0:40]
+set title 'it=200'
+set xlabel 'x'
+set ylabel 'y'
+
+splot [0:40][0:40] "T.dat" u 1:2:3 i 1 notitle
+
+# #------------------------------------------------------------------------
+set cbrange[0:40]
+set title 'it=500'
+set xlabel 'x'
+set ylabel 'y'
+
+splot [0:40][0:40] "T.dat" u 1:2:3 i 2 notitle
 
 #------------------------------------------------------------------------
-set cbrange[0:12]
+set cbrange[0:40]
+set title 'it=1000'
+set xlabel 'x'
+set ylabel 'y'
+
+splot [0:40][0:40] "T.dat" u 1:2:3 i 3 notitle
+
+# #------------------------------------------------------------------------
+set cbrange[0:40]
+set title 'it=2000'
+set xlabel 'x'
+set ylabel 'y'
+
+splot [0:40][0:40] "T.dat" u 1:2:3 i 4 notitle
+
+#------------------------------------------------------------------------
+set cbrange[0:0.12]
 set title 'it=100'
 set xlabel 'x'
 set ylabel 'y'
@@ -70,12 +101,7 @@ splot [0:40][0:40] "dT.dat" u 1:2:3 i 0 notitle
 #splot [0:400][0:90] "u_t.dat" u 1:2:3 i 3 notitle
 
 #------------------------------------------------------------------------
-set cbrange[0:40]
-set title 'it=200'
-set xlabel 'x'
-set ylabel 'y'
 
-splot [0:40][0:40] "T.dat" u 1:2:3 i 1 notitle
 
 # # #------------------------------------------------------------------------
 set cbrange[0:0.045]
@@ -93,16 +119,9 @@ splot [0:40][0:40] "dT.dat" u 1:2:3 i 1 notitle
 
 # #splot [0:400][0:90] "u_t.dat" u 1:2:3 i 5 notitle
 
-# #------------------------------------------------------------------------
-set cbrange[0:40]
-set title 'it=500'
-set xlabel 'x'
-set ylabel 'y'
-
-splot [0:40][0:40] "T.dat" u 1:2:3 i 2 notitle
 
 # #------------------------------------------------------------------------
-set cbrange[0:0.025]
+set cbrange[0:0.0025]
 set title 'it=500'
 set xlabel 'x'
 set ylabel 'y'
@@ -117,13 +136,7 @@ splot [0:40][0:40] "dT.dat" u 1:2:3 i 2 notitle
 
 #splot [0:400][0:90] "u_t.dat" u 1:2:3 i 7 notitle
 
-#------------------------------------------------------------------------
-set cbrange[0:40]
-set title 'it=1000'
-set xlabel 'x'
-set ylabel 'y'
 
-splot [0:40][0:40] "T.dat" u 1:2:3 i 3 notitle
 
 # #------------------------------------------------------------------------
 set cbrange[0:0.000016]
@@ -140,16 +153,9 @@ splot [0:40][0:40] "dT.dat" u 1:2:3 i 3 notitle
 
 # #splot [0:400][0:90] "u_t.dat" u 1:2:3 i 8 notitle
 
-# #------------------------------------------------------------------------
-set cbrange[0:40]
-set title 'it=2000'
-set xlabel 'x'
-set ylabel 'y'
-
-splot [0:40][0:40] "T.dat" u 1:2:3 i 4 notitle
 
 # # #------------------------------------------------------------------------
-set cbrange[0:7*10e-10]
+set cbrange[0:0.0000000007]
 set title 'it=2000'
 set xlabel 'x'
 set ylabel 'y'
