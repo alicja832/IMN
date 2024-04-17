@@ -12,12 +12,6 @@ z = data[:,3]
 x = np.reshape(x, (len(np.unique(y)), -1))
 y = np.reshape(y, (len(np.unique(y)), -1))
 z = np.reshape(z, (len(np.unique(y)), -1))
-# # y = np.arange(-2.0, 2.0, delta)
-
-#X, Y = np.meshgrid(x, y)
-# Z1 = np.exp(-X**2 - Y**2)
-# Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2)
-# Z = (Z1 - Z2) * 2
 
 fig, ax = plt.subplots()
 levels=np.arange(-200, 300, 20)
